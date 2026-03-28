@@ -73,6 +73,28 @@
     z-index: 10;
   }
 
+  .nav-toggle {
+    display: none;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  }
+
+  .nav-toggle:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .nav-toggle .menu-icon { font-size: 18px; }
+  .nav-toggle .close-icon { display: none; font-size: 16px; }
+  .nav-toggle.open .menu-icon { display: none; }
+  .nav-toggle.open .close-icon { display: inline; }
+
   .logo {
     font-family: var(--font-head);
     font-size: 22px;
@@ -104,6 +126,24 @@
     transition: color 0.2s;
   }
   .nav-link:hover { color: var(--text); }
+
+  @media (max-width: 900px) {
+    nav { align-items: flex-start; }
+    .nav-toggle { display: inline-flex; }
+    .nav-right {
+      display: none;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      gap: 10px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-right.open { display: flex; }
+    .nav-link, .nav-badge { width: 100%; }
+    .nav-badge { text-align: center; }
+  }
 
   /* ── HERO ── */
   .hero { padding: 60px 0 48px; text-align: center; }
@@ -304,8 +344,6 @@
     color: var(--accent2);
     flex-shrink: 0;
   }
-
-  .step-content {}
   .step-name {
     font-family: var(--font-head);
     font-size: 17px;
@@ -676,6 +714,7 @@
     font-size: 15px;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
     -webkit-appearance: none;
   }
 
@@ -852,7 +891,12 @@
 <div class="container">
   <nav>
     <div class="logo">AdsMind ✦</div>
-    <div class="nav-right">
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-right">
+      <span class="menu-icon">☰</span>
+      <span class="close-icon">✕</span>
+      Menu
+    </button>
+    <div class="nav-right" id="nav-right">
       <a href="#how-it-works" class="nav-link">How It Works</a>
       <a href="#form" class="nav-link">Get Report</a>
       <div class="nav-badge">100% Free</div>
@@ -1322,6 +1366,25 @@
 </div>
 
 <script>
+  const navToggle = document.getElementById('nav-toggle');
+  const navRight = document.getElementById('nav-right');
+
+  if (navToggle && navRight) {
+    navToggle.addEventListener('click', () => {
+      const isOpen = navRight.classList.toggle('open');
+      navToggle.classList.toggle('open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) {
+        navRight.classList.remove('open');
+        navToggle.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
   const N8N_WEBHOOK_URL = 'https://YOUR-N8N-INSTANCE.n8n.cloud/webhook/meta-ads-agent';
 
   function switchMode(mode) {
